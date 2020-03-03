@@ -1,19 +1,15 @@
 'use strict';
 (function() {
     let data = '';
-    let svgContainer = '';
+    const colors = ['#FFD700', '#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#0000FF', '	#8B008B', '#FF1493', '#FFF0F5', '#696969']
     let margin = {
-        top: 20,
+        top: 50,
         right: 20,
-        bottom: 30,
-        left: 50
+        bottom: 50,
+        left: 220
     }
 
     window.onload = () => {
-        svgContainer = d3.select('body')
-                        .append('svg')
-                        .attr('width', 1400)
-                        .attr('height', 800)
         d3.csv('data/top10.csv')
             .then((res) => {
                 data = res;
@@ -41,54 +37,57 @@
         groupEmployer = groupEmployer.sort((a, b) => {
             return d3.ascending(a.pass, b.pass)
         })
-        console.log(groupEmployer)
         plotBar(groupEmployer)
 
     }
     function plotBar(groupEmployer) {
-        var width = 960 - margin.left - margin.right
-        var height = 500 - margin.top - margin.bottom
+        var width = 1250 - margin.left - margin.right // count of pass
+        var height = 700 - margin.top - margin.bottom // employer names
+        var color = d3.scaleOrdinal().range(colors);
         var svg = d3.select("#chart").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        var x = d3.scaleBand()
-            .rangeRound([0, width])
+        // employer names
+        var y = d3.scaleBand()
+            .rangeRound([0, height])
             .padding(0.1)
             .domain(groupEmployer.map((d) => {
                 return d.employer
             }))
-        var y = d3.scaleLinear()
-                .rangeRound([height, 0])
-                .domain([0, d3.max(groupEmployer, function (d) {
+        // count of pass
+        var x = d3.scaleLinear()
+                .rangeRound([width, 0])
+                .domain([d3.max(groupEmployer, function (d) {
                     return d.pass
-                })]);
+                }), 0]);
         svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x))
-        svg.append("g")
-                .call(d3.axisLeft(y))
-                .append("text")
+                .append('text')
                 .attr("fill", "#000")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", "0.71em")
+                .attr('x', 900)
+                .attr('y', 30)
+                .attr('font-size', '15px')
                 .attr("text-anchor", "end")
                 .text("Count of Pass");
+        svg.append("g")
+                .call(d3.axisLeft(y))
         svg.selectAll(".bar")
                 .data(groupEmployer)
                 .enter().append("rect")
                 .attr("class", "bar")
-                .attr("x", function (d) {
-                    return x(d.employer);
-                })
+                .attr("x", 7)
                 .attr("y", function (d) {
-                    return y(d.pass);
+                    return y(d.employer);
                 })
-                .attr("width", x.bandwidth())
-                .attr("height", function (d) {
-                    return height - y(d.pass);
-                });
+                .attr("height", y.bandwidth())
+                .attr("width", function (d) {
+                    return x(d.pass);
+                })
+                .style("fill", function(d, i) {
+                    return color(i);
+                  })
     }
 })()

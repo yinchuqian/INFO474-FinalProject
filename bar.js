@@ -1,7 +1,7 @@
 'use strict';
 (function() {
     let data = '';
-    const colors = ['#FFD700', '#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#0000FF', '	#8B008B', '#FF1493', '#FFF0F5', '#696969']
+    const colors = ['#FFD700', '#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#0000FF', '	#8B008B', '#FF1493', 'black', '#696969']
     let margin = {
         top: 50,
         right: 20,
@@ -13,14 +13,44 @@
         d3.csv('data/top10.csv')
             .then((res) => {
                 data = res;
+                for(let item in data) {
+                    data[item].YEAR = Math.round(data[item].YEAR)
+                }
                 handleData(data)
             })
     }
     function handleData(data) {
+        var yearDrop = d3.select("body").append("select").attr("class", "year-drop")
+
+        yearDrop.append('option')
+                  .data(data)
+                  .text('All Years')
+                  .attr('value', 'All')
+                  .enter()
+        yearDrop.selectAll("option.state")
+                .data(d3.map(data, (d) => {return d.YEAR}).keys())
+                .enter()
+                .append("option")
+                .text((d) => { return d});
+        let groupEmployer = filterData('All', data);
+        plotBar(groupEmployer)
+        yearDrop.on('change', function() {
+            let selectedYear = d3.select(this).property("value");
+            console.log(selectedYear)
+            groupEmployer = filterData(selectedYear, data)
+            plotBar(groupEmployer)
+        })
+
+    }
+    function filterData(selectedYear, data) {
+        let employerToPass = {}
         let groupEmployer = [];
-        let employerToPass = {};
-        for(let i = 0; i < data.length; i++) {
-            let each = data[i];
+        let filtered = data;
+        if(selectedYear !== 'All') {
+            filtered = filtered.filter((each) => each.YEAR == selectedYear);
+        }
+        for(let i = 0; i < filtered.length; i++) {
+            let each = filtered[i];
             if (!employerToPass[each['EMPLOYER_NAME']]) {
                 employerToPass[each['EMPLOYER_NAME']] = 0;
             }
@@ -37,13 +67,13 @@
         groupEmployer = groupEmployer.sort((a, b) => {
             return d3.ascending(a.pass, b.pass)
         })
-        plotBar(groupEmployer)
-
+        return groupEmployer
     }
     function plotBar(groupEmployer) {
         var width = 1250 - margin.left - margin.right // count of pass
         var height = 700 - margin.top - margin.bottom // employer names
         var color = d3.scaleOrdinal().range(colors);
+        d3.select('#chart').selectAll('svg').remove();
         var svg = d3.select("#chart").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)

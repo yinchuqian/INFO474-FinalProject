@@ -1,0 +1,104 @@
+<html>
+<head>
+  <title>A D3 map</title>
+  <!--Specific Stylesheets-->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://unpkg.com/d3-simple-slider"></script>
+
+  <script src="js/index.js"></script>
+  <style>
+    /* #neighborhoods path{
+      fill: #ccc;
+    }
+    #rodents path{
+      fill: #900;
+      stroke: #999;
+    }
+    #rodents path:hover{
+      fill: black;
+    } */
+
+    body {
+      background-color: rgb(255, 240, 220);
+    }
+
+    h1 {
+      color: rgb(129, 73, 0);
+
+    }
+
+    h2, h3 {
+      text-align: left;
+      margin-left: 10px;
+    }
+
+    h2 {
+      font-size: 15px;
+    }
+
+    h3 {
+      font-size: 10px;
+    }
+
+    div.tooltip {
+      position: absolute;
+      text-align: center;
+      padding: 10px;
+      font: 12px sans-serif;
+      background: white;
+      border: 0px;
+      border-radius: 8px;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    div#slider-time-control {
+      height: 80px;
+      position: relative;
+    }
+
+    div.button {
+      position: absolute;
+      width: 70px;
+      left:10px;
+      margin: 1vh 1vw 1vh 0vw;
+      padding: 15px 10px;
+      border: 1px solid rgb(129, 73, 0);
+      background-color: rgb(129, 73, 0);
+      border-radius: 10px;
+      color: white;
+    }
+
+    div.button:nth-of-type(2n) {
+      top: 0px;
+      left: 120px;
+    }
+
+    div#slider {
+      position: absolute;
+      left: 150px;
+    }
+
+    div.button i {
+      margin-right: 5px;
+    }
+
+    g.tick text {
+      color: rgb(129, 73, 0);
+
+    }
+
+  </style>
+</head>
+<body>
+  <h1>How the number of H1B visa petition varies in different states? How did it changed from 2011 to 2016?</h1>
+  <div id="slider-time-control">
+    <div class="button" id="button1" type="button"><i class="fas fa-play"></i> Play</div>
+    <div class="button" id="button2" type="button"><i class="fas fa-stop"></i> Reset</div>
+    <div id="slider"></div>
+  </div>
+</body>
+</html>

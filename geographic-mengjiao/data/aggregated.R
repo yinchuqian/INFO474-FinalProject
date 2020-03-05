@@ -2,9 +2,9 @@ library(dplyr)
 library(stringr)
 library(tidyr)
 
-# setwd("Desktop/INFO474/INFO474-FinalProject/")
+# setwd("Desktop/INFO474/Final Project/INFO474-FinalProject/")
 
-# all_data <- read.csv("data/h1b_kaggle.csv", stringsAsFactors = FALSE)
+all_data <- read.csv("data/h1b_kaggle.csv", stringsAsFactors = FALSE)
 
 # CASE_STATUS, JOB_TITLE, YEAR
 filtered_data <- all_data %>%
@@ -68,27 +68,46 @@ summarized_data <- summarized_state_2011 %>%
 
 write.csv(summarized_data, "geographic-mengjiao/data/state.csv")
 
-# 
-# yearly_data <- all_data %>%
-#   select(EMPLOYER_NAME, YEAR, CASE_STATUS) %>%
-#   group_by(EMPLOYER_NAME, YEAR) %>%
-#   filter(CASE_STATUS == "CERTIFIED") %>%
-#   summarize(count = n())
 
-# data_2011 <- filtered_data %>%
-#   filter(YEAR == 2011)
-# 
-# data_2012 <- filtered_data %>%
-#   filter(YEAR == 2012)
-# 
-# data_2013 <- filtered_data %>%
-#   filter(YEAR == 2013)
-# 
-# data_2014 <- filtered_data %>%
-#   filter(YEAR == 2014)
-# 
-# data_2015 <- filtered_data %>%
-#   filter(YEAR == 2015)
+yearly_data <- all_data %>%
+  select(EMPLOYER_NAME, YEAR, CASE_STATUS) %>%
+  group_by(EMPLOYER_NAME, YEAR) %>%
+  filter(CASE_STATUS == "CERTIFIED") %>%
+  summarize(count = n())
+
+data_2011 <- filtered_data %>%
+  filter(YEAR == 2011)
+
+data_2012 <- filtered_data %>%
+  filter(YEAR == 2012)
+
+data_2013 <- filtered_data %>%
+  filter(YEAR == 2013)
+
+data_2014 <- filtered_data %>%
+  filter(YEAR == 2014)
+
+data_2015 <- filtered_data %>%
+  filter(YEAR == 2015)
+
+companyData <- all_data %>%
+  select(EMPLOYER_NAME, WORKSITE, lon, lat, YEAR, CASE_STATUS) %>%
+  mutate(STATE = str_split_fixed(all_data$WORKSITE, ", ", 2)[,2]) %>%
+  filter(CASE_STATUS == "CERTIFIED") %>%
+  select(EMPLOYER_NAME, STATE, lon, lat, YEAR) %>%
+  group_by(EMPLOYER_NAME,STATE,YEAR) %>%
+  summarize(longitude = mean(lon, na.rm = TRUE),
+            latitude = mean(lat, na.rm = TRUE),
+            count = n()) 
+
+write.csv(companyData, "geographic-mengjiao/data/companyData.csv")
+
+  # %>%
+  # group_by(longitude, latitude, YEAR, STATE) %>%
+  # summarize(count = sum(count),
+  #           EMPLOYER_NAME = list(EMPLOYER_NAME))
+
+
 
 # write.csv(data_2011, "geographic-mengjiao/data/2011.csv")
 # write.csv(data_2012, "geographic-mengjiao/data/2012.csv")

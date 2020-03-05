@@ -8,9 +8,14 @@
         bottom: 50,
         left: 220
     }
+    let tinyScales = {
+        width: 500,
+        height: 500,
+        margin: 50,
+    }
 
     window.onload = () => {
-        d3.csv('data/top10.csv')
+        d3.csv('data/top.csv')
             .then((res) => {
                 data = res;
                 for(let item in data) {
@@ -33,10 +38,10 @@
                 .append("option")
                 .text((d) => { return d});
         let groupEmployer = filterData('All', data);
+        console.log(groupEmployer)
         plotBar(groupEmployer)
         yearDrop.on('change', function() {
             let selectedYear = d3.select(this).property("value");
-            console.log(selectedYear)
             groupEmployer = filterData(selectedYear, data)
             plotBar(groupEmployer)
         })
@@ -70,7 +75,7 @@
         return groupEmployer
     }
     function plotBar(groupEmployer) {
-        var width = 1250 - margin.left - margin.right // count of pass
+        var width = 1300 - margin.left - margin.right // count of pass
         var height = 700 - margin.top - margin.bottom // employer names
         var color = d3.scaleOrdinal().range(colors);
         d3.select('#chart').selectAll('svg').remove();
@@ -104,6 +109,15 @@
                 .text("Count of Pass");
         svg.append("g")
                 .call(d3.axisLeft(y))
+        
+        let toolTip = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+
+        let pieChart = toolTip.append('svg')
+                            .attr('width', tinyScales.width)
+                            .attr('height', tinyScales.height)
+        
         svg.selectAll(".bar")
                 .data(groupEmployer)
                 .enter().append("rect")
@@ -119,5 +133,57 @@
                 .style("fill", function(d, i) {
                     return color(i);
                   })
+                .on('mouseover', (d) => {
+                    pieChart.selectAll("*").remove()
+                    toolTip.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                            plotIncrease(data, d, pieChart)
+
+                })
+    }
+    function plotIncrease(data, d, pieChart) {
+        let companyData = data.filter((each) => each.EMPLOYER_NAME == d.employer)
+        let stat = {2011: 0, 2012: 0, 2013: 0, 2014: 0, 2015: 0, 2016: 0}
+        for(let i in companyData) {
+            if(companyData[i]['CASE_STATUS'] === 'CERTIFIED') {
+                stat[companyData[i]['YEAR']]++
+            }
+        }
+        let statArray = []
+        for(let key in stat) {
+            let eachYear = {}
+            eachYear['YEAR'] = key
+            eachYear['passed'] = stat[key]
+            statArray.push(eachYear)
+        }
+        let limits = {
+            passed_min: d3.min(statArray.map((each) => each.passed)),
+            passed_max: d3.max(statArray.map((each) => each.passed))
+        }
+        console.log(limits)
+        let year_scale = d3.scaleLinear()
+            .range([tinyScales.margin, tinyScales.width - tinyScales.margin])
+            .domain([2010, 2017])
+        let passed_scale = d3.scaleLinear()
+            .range([tinyScales.margin, tinyScales.height - tinyScales.margin])
+            .domain([limits.passed_max + 1000, 0]);
+        let year_plot = d3.axisBottom().scale(year_scale);
+        pieChart.append("g")
+                .attr('transform','translate(0, ' + (tinyScales.height - tinyScales.margin) + ')')
+                .call(year_plot)
+                
+        let passed_plot = d3.axisLeft().scale(passed_scale);
+        pieChart.append('g')
+                    .attr('transform', 'translate(' + tinyScales.margin + ', 0)')
+                    .call(passed_plot)
+        pieChart.append("path")
+                    .datum(statArray)
+                    .attr("fill", "none")
+                    .attr("stroke", "steelblue")
+                    .attr("stroke-width", 1.5)
+                    .attr("d", d3.line()
+                        .x((d) => { return year_scale(d.YEAR) })
+                        .y((d) => { return passed_scale(d.passed) }))
     }
 })()

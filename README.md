@@ -5,7 +5,7 @@ Our group will be analyzing a dataset about â€‹H-1B petitions from [2011 - 2016â
 * We use d3 to create an interactive map to display the geographic location of the H1B visa petition to figure out how the number of H1B visa petition varies in different states and cities. (Mengjiao)
 Link: https://scottmo1202.github.io/INFO474-FinalProject/geographic-mengjiao
 
-* What is the trend of average salary of H-1B intended workers? We used a line plot to show the average salary by year, filtered by case status. The tooltip shows a box and whisker plot of the salaries. 
+* What is the trend of average salary of H-1B intended workers? We used a line plot to show the average salary by year, filtered by case status. The tooltip shows a box and whisker plot of the salaries. (Vanessa)
 Link: https://public.tableau.com/profile/vanessa.yang4510#!/vizhome/viz_15837137402510/main-plot?publish=yes
 
 * Which company files the most petitions every year? - we use a bar plot to show the top 10 companies that file the most petition. (Scott)

@@ -12,7 +12,7 @@ Link: https://public.tableau.com/profile/vanessa.yang4510#!/vizhome/viz_15837137
 Link: https://scottmo1202.github.io/INFO474-Bar-Final/
 
 * We use Tableau to construct a pie chart to show employees on which position in a company is more likely to file an H1B visa petition, for example, data scientist, soft engineer or program manager? (Chuqian Yin)
-Link: (will be updated)
+Link: https://public.tableau.com/profile/chuqian.yin#!/vizhome/HowdoesthejobtitlesinfluencethenumberofapplicationsinH1Bvisa/Sheet1
 
 
 GEOJSON: https://eric.clst.org/tech/usgeojson/
